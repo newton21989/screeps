@@ -1,6 +1,7 @@
-var name = require('name');
+let name = require('name');
+let utils = require('utils');
 
-var roleFighter = {
+let roleFighter = {
 
   /** @param {Creep} creep **/
   run: function(creep) {
@@ -45,42 +46,16 @@ var roleFighter = {
     }*/
   },
 
-  spawn: function(energy)
+  spawn: function(spawner)
   {
-    var maxWork = 1;
-    var maxCarry = 1;
-    var maxMove = 5;
-    var maxAttack = 5;
+    let energy = spawner.room.energyAvailable;
 
-    var costWork = 100 * maxWork;
-    var costCarry = 50 * maxCarry;
-    var costMove = 50 * maxMove;
-    var costAttack = 80 * maxAttack;
-
-    var maxParts = costWork + costCarry + costMove + costAttack;
-    var weightWork = costWork / maxParts;
-    var weightCarry = costCarry / maxParts;
-    var weightMove = costMove / maxParts;
-    var weightAttack = costAttack / maxParts;
-
-    var spawnWork = Math.floor(energy * weightWork / 100)
-    var spawnCarry = Math.floor(energy * weightCarry / 50)
-    var spawnMove = Math.floor(energy * weightMove / 50)
-    var spawnAttack = Math.floor(energy * weightAttack / 80)
-
-    var spawnParts = Array();
-
-    for(var i = 0; i < Math.max(spawnWork, 1); i++)
-      spawnParts.push(WORK);
-
-    for(var i = 0; i < Math.max(spawnCarry, 1); i++)
-      spawnParts.push(CARRY);
-
-    for(var i = 0; i < Math.max(spawnMove, 1); i++)
-      spawnParts.push(MOVE);
-
-    for(var i = 0; i < Math.max(spawnAttack, 1); i++)
-      spawnParts.push(ATTACK);
+    let spawnParts = utils.generateBody(energy, {
+        [WORK]:  { min: 1 },
+        [CARRY]: { min: 1 },
+        [MOVE]:  { min: 1, max: 5 },
+        [ATTACK]:  { min: 1, max: 5 }
+    });
 
     //console.log(spawnParts);
     spawn = Game.spawns['Spawn1'].spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'fighter', working : false, refuel: true}});

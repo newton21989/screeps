@@ -1,8 +1,8 @@
-var config = require('config');
-var name = require('name');
+let config = require('config');
+let name = require('name');
 
 mostDamaged = function( array ){
-  var array2 = Array();
+  let array2 = Array();
   
   for(let object of array) {
     array2.push(object.hits / object.hitsMax);
@@ -11,7 +11,7 @@ mostDamaged = function( array ){
   return array[array2.indexOf(Math.min.apply(Math, array2))];
 }
 
-var roleTower = {
+let roleTower = {
   run: function(tower)
   {
     var target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);

@@ -1,6 +1,7 @@
-var name = require('name');
+let name = require('name');
+let utils = require('utils');
 
-var roleBuilder = {
+let roleBuilder = {
 
   /** @param {Creep} creep **/
   run: function(creep) {
@@ -31,7 +32,7 @@ var roleBuilder = {
     if(creep.memory.working == true && !target)
       creep.memory.working = false;
 
-    var numContainers = creep.room.find(FIND_STRUCTURES, {filter: (struct) => struct.structureType == STRUCTURE_CONTAINER}).length;
+    let numContainers = creep.room.find(FIND_STRUCTURES, {filter: (struct) => struct.structureType == STRUCTURE_CONTAINER}).length;
 
     if(creep.memory.working) {
       if(target && creep.build(target) == ERR_NOT_IN_RANGE)
@@ -40,7 +41,7 @@ var roleBuilder = {
       }
     }
     else if(numContainers == 0) {
-      var source = creep.pos.findClosestByPath(FIND_SOURCES);
+      let source = creep.pos.findClosestByPath(FIND_SOURCES);
         
       if(source && creep.harvest(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE)
         creep.moveTo(source, {visualizePathStyle: {stroke: '#ffaa00'}});
@@ -53,35 +54,15 @@ var roleBuilder = {
     }
   },
   
-  spawn: function(energy)
+  spawn: function(spawner)
   {
-    var maxWork = 5;
-    var maxCarry = 7;
-    var maxMove = 7;
+    let energy = spawner.room.energyAvailable;
 
-    var costWork = 100 * maxWork;
-    var costCarry = 50 * maxCarry;
-    var costMove = 50 * maxMove;
-
-    var maxParts = costWork + costCarry + costMove;
-    var weightWork = costWork / maxParts;
-    var weightCarry = costCarry / maxParts;
-    var weightMove = costMove / maxParts;
-
-    var spawnWork = Math.floor(energy * weightWork / 100)
-    var spawnCarry = Math.floor(energy * weightCarry / 50)
-    var spawnMove = Math.floor(energy * weightMove / 50)
-
-    var spawnParts = Array();
-
-    for(var i = 0; i < Math.max(Math.min(spawnWork, maxWork), 1); i++)
-      spawnParts.push(WORK);
-
-    for(var i = 0; i < Math.max(Math.min(spawnCarry, maxCarry), 1); i++)
-      spawnParts.push(CARRY);
-
-    for(var i = 0; i < Math.max(Math.min(spawnMove, maxMove), 1); i++)
-      spawnParts.push(MOVE);
+    let spawnParts = utils.generateBody(energy, {
+        [WORK]:  { min: 1, max: 5 },
+        [CARRY]: { min: 1, max: 7 },
+        [MOVE]:  { min: 1, max: 7 }
+    });
 
     //console.log(spawnParts);
     spawn = Game.spawns['Spawn1'].spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'builder', working : false, refuel: true}});

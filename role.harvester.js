@@ -1,8 +1,7 @@
-var name = require('name');
+let name = require('name');
+let utils = require('utils');
 
-var roleHarvester = {
-
-  /** @param {Creep} creep **/
+let roleHarvester = {
   run: function(creep) {
     if(creep.memory.working && creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
       creep.memory.working = false;
@@ -14,7 +13,7 @@ var roleHarvester = {
     }
 
     if(creep.memory.working) {
-      var target = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (object) => (object.structureType == STRUCTURE_CONTAINER && object.store.getFreeCapacity(RESOURCE_ENERGY) > 0) || (object.structureType == STRUCTURE_LINK && object.store.getFreeCapacity(RESOURCE_ENERGY) > 0) } )
+      let target = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (object) => (object.structureType == STRUCTURE_CONTAINER && object.store.getFreeCapacity(RESOURCE_ENERGY) > 0) || (object.structureType == STRUCTURE_LINK && object.store.getFreeCapacity(RESOURCE_ENERGY) > 0) } )
       if(!target && creep.room.find(FIND_STRUCTURES, { filter: (object) => object.structureType == STRUCTURE_CONTAINER}).length == 0)
       {
         try {
@@ -27,46 +26,30 @@ var roleHarvester = {
     }
     else {
       //var source = creep.pos.findClosestByPath(FIND_SOURCES, { filter: (object) => object.store.getUsedCapacity(RESOURCE_ENERGY) > 0 } );
-      var source = Game.getObjectById(creep.memory.source);
+      let source = Game.getObjectById(creep.memory.source);
       if(source && creep.harvest(source) == ERR_NOT_IN_RANGE) {
         creep.moveTo(source, {visualizePathStyle: {stroke: '#ffaa00'}});
       }
     }
   },
 
-  spawn: function(energy, sourceid)
+  spawn: function(spawner, sourceid)
   {
-    var maxWork = 6;
-    var maxCarry = 1;
-    var maxMove = 1;
+    let energy = spawner.room.energyAvailable;
 
-    var costWork = 105 * maxWork;
-    var costCarry = 50 * maxCarry;
-    var costMove = 50 * maxMove;
+    let spawnParts = utils.generateBody(energy, {
+        [WORK]:  { min: 1, max: 6 },
+        [CARRY]: { min: 1 },
+        [MOVE]:  { min: 1 }
+    });
 
-    var maxParts = costWork + costCarry + costMove;
-    var weightWork = costWork / maxParts;
-    var weightCarry = costCarry / maxParts;
-    var weightMove = costMove / maxParts;
+    if (spawnParts.length === 0) {
+      console.log("Not enough energy to spawn harvester.");
+      return ERR_NOT_ENOUGH_ENERGY;
+    }
 
-    var spawnWork = Math.floor(energy * weightWork / 100)
-    var spawnCarry = Math.floor(energy * weightCarry / 50)
-    var spawnMove = Math.floor(energy * weightMove / 50)
-
-    var spawnParts = Array();
-
-    for(var i = 0; i < Math.max(Math.min(spawnWork, maxWork), 1); i++)
-      spawnParts.push(WORK);
-
-    for(var i = 0; i < Math.max(Math.min(spawnCarry, maxCarry), 1); i++)
-      spawnParts.push(CARRY);
-
-    for(var i = 0; i < Math.max(Math.min(spawnMove, maxMove), 1); i++)
-      spawnParts.push(MOVE);
-
-    // console.log(spawnParts);
-    spawn = Game.spawns['Spawn1'].spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'harvester', working : false, source: sourceid}});
-    // if(spawn == ERR_NOT_ENOUGH_ENERGY)
+    let result = spawner.spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'harvester', working : false, source: sourceid}});
+    // if(result == ERR_NOT_ENOUGH_ENERGY) {
     //   console.log("Not enough energy to spawn harvester.");
   }
 };

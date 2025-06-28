@@ -1,4 +1,4 @@
-var array = [
+const array = [
   "Nellie", 
   "Optimus", 
   "Ultron",
@@ -7,6 +7,7 @@ var array = [
   "Klaatu",
   "Turing",
   "Jobs",
+  "Woz",
   "Bender",
   "Rosie",
   "Enigma",
@@ -23,10 +24,28 @@ var array = [
   "Padme",
   "Clara",
   "Rey",
-  "Jen"
+  "Jen",
+  "Bradbury",
+  "Elon",
+  "Grok",
+  "X Æ A-12",
+  "Darmok",
+  "Jalad",
+  "Picard",
+  "Frakes",
+  "Madden",
+  "Rubb",
+  "Dude",
+  "Sweet",
+  "Aldus",
+  "Geddy",
+  "Busta",
+  "Hiro-san",
+  "Sy Greenblum",
+  "Otto"
 ]
 
-var genName = {
+let genName = {
   /** @return {string} */
   getRandom: function() {
     return array[Math.floor(Math.random() * array.length)];

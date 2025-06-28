@@ -1,6 +1,7 @@
-var name = require('name');
+let name = require('name');
+let utils = require('utils');
 
-var roleUpgrader = {
+let roleUpgrader = {
 
   /** @param {Creep} creep **/
   run: function(creep) {
@@ -24,7 +25,7 @@ var roleUpgrader = {
       }
     }
     if(creep.memory.refuel) {
-      var source = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: (object) => object.structureType == STRUCTURE_CONTAINER && object.store.getUsedCapacity(RESOURCE_ENERGY) > 0} );
+      let source = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: (object) => object.structureType == STRUCTURE_CONTAINER && object.store.getUsedCapacity(RESOURCE_ENERGY) > 0} );
         
       if(source && creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE)
         creep.moveTo(source, {visualizePathStyle: {stroke: '#0000ff'}});
@@ -37,35 +38,15 @@ var roleUpgrader = {
     }
   },
   
-  spawn: function(energy)
+  spawn: function(spawner, sourceid)
   {
-    var maxWork = 5;
-    var maxCarry = 7;
-    var maxMove = 7;
+    let energy = spawner.room.energyAvailable;
 
-    var costWork = 100 * maxWork;
-    var costCarry = 50 * maxCarry;
-    var costMove = 50 * maxMove;
-
-    var maxParts = costWork + costCarry + costMove;
-    var weightWork = costWork / maxParts;
-    var weightCarry = costCarry / maxParts;
-    var weightMove = costMove / maxParts;
-
-    var spawnWork = Math.floor(energy * weightWork / 100)
-    var spawnCarry = Math.floor(energy * weightCarry / 50)
-    var spawnMove = Math.floor(energy * weightMove / 50)
-
-    var spawnParts = Array();
-
-    for(var i = 0; i < Math.max(Math.min(spawnWork, maxWork), 1); i++)
-      spawnParts.push(WORK);
-
-    for(var i = 0; i < Math.max(Math.min(spawnCarry, maxCarry), 1); i++)
-      spawnParts.push(CARRY);
-
-    for(var i = 0; i < Math.max(Math.min(spawnMove, maxMove), 1); i++)
-      spawnParts.push(MOVE);
+    let spawnParts = utils.generateBody(energy, {
+        [WORK]:  { min: 1, max: 5 },
+        [CARRY]: { min: 1, max: 7 },
+        [MOVE]:  { min: 1, max: 7 }
+    });
 
     //console.log(spawnParts);
     spawn = Game.spawns['Spawn1'].spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'upgrader', working : false, refuel: true}});
