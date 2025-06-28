@@ -56,7 +56,7 @@ let roleBuilder = {
   
   spawn: function(spawner)
   {
-    let energy = spawner.room.energyAvailable;
+    let energy = spawner.room.energyCapacityAvailable;
 
     let spawnParts = utils.generateBody(energy, {
         [WORK]:  { min: 1, max: 5 },
@@ -64,10 +64,9 @@ let roleBuilder = {
         [MOVE]:  { min: 1, max: 7 }
     });
 
-    //console.log(spawnParts);
-    spawn = Game.spawns['Spawn1'].spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'builder', working : false, refuel: true}});
-    //if(spawn == ERR_NOT_ENOUGH_ENERGY)
-    //  console.log("Not enough energy to spawn builder.");
+    let result = spawner.spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'builder', working : false, refuel: true}});
+    if(result !== 'OK')
+      console.log(`Failed to spawn builder: ${result}`);
 
   }
 };

@@ -56,7 +56,9 @@ let roleBootstrapper = {
         [MOVE]:  { min: 1 }
     });
 
-    spawner.spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'bootstrapper', working : false}});
+    let result = spawner.spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'bootstrapper', working : false}});
+    if(result !== 'OK')
+      console.log(`Failed to spawn bootstrapper: ${result}`);
   }
 };
 

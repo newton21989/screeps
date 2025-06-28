@@ -35,7 +35,7 @@ let roleHarvester = {
 
   spawn: function(spawner, sourceid)
   {
-    let energy = spawner.room.energyAvailable;
+    let energy = spawner.room.energyCapacityAvailable;
 
     let spawnParts = utils.generateBody(energy, {
         [WORK]:  { min: 1, max: 6 },
@@ -49,8 +49,8 @@ let roleHarvester = {
     }
 
     let result = spawner.spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'harvester', working : false, source: sourceid}});
-    // if(result == ERR_NOT_ENOUGH_ENERGY) {
-    //   console.log("Not enough energy to spawn harvester.");
+    if(result !== 'OK')
+      console.log(`Failed to spawn harvester: ${result}`);
   }
 };
 

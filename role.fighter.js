@@ -48,7 +48,7 @@ let roleFighter = {
 
   spawn: function(spawner)
   {
-    let energy = spawner.room.energyAvailable;
+    let energy = spawner.room.energyCapacityAvailable;
 
     let spawnParts = utils.generateBody(energy, {
         [WORK]:  { min: 1 },
@@ -57,10 +57,9 @@ let roleFighter = {
         [ATTACK]:  { min: 1, max: 5 }
     });
 
-    //console.log(spawnParts);
-    spawn = Game.spawns['Spawn1'].spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'fighter', working : false, refuel: true}});
-    //if(spawn == ERR_NOT_ENOUGH_ENERGY)
-    //  console.log("Not enough energy to spawn upgrader.");
+    let result = spawner.spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'fighter', working : false, refuel: true}});
+    if(result !== 'OK')
+      console.log(`Failed to spawn fighter: ${result}`);
   }
 
 };

@@ -40,9 +40,9 @@ let roleRepairman = {
     }
   },
 
-  spawn: function(spawner, sourceid)
+  spawn: function(spawner)
   {
-    let energy = spawner.room.energyAvailable;
+    let energy = spawner.room.energyCapacityAvailable;
 
     let spawnParts = utils.generateBody(energy, {
         [WORK]:  { min: 1, max: 4 },
@@ -50,10 +50,9 @@ let roleRepairman = {
         [MOVE]:  { min: 1, max: 3 }
     });
 
-    //console.log(spawnParts);
-    spawn = Game.spawns['Spawn1'].spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'repairman', working : false}});
-    //if(spawn == ERR_NOT_ENOUGH_ENERGY)
-    //  console.log("Not enough energy to spawn repairman.");
+    let result = spawner.spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'repairman', working : false}});
+    if(result !== 'OK')
+      console.log(`Failed to spawn repairman: ${result}`);
   }
 };
 

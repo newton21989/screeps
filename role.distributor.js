@@ -48,7 +48,7 @@ let roleDistributor = {
   
   spawn: function(spawner)
   {
-    let energy = spawner.room.energyAvailable;
+    let energy = spawner.room.energyCapacityAvailable;
 
     let spawnParts = utils.generateBody(energy, {
         [WORK]:  { min: 1 },
@@ -56,10 +56,9 @@ let roleDistributor = {
         [MOVE]:  { min: 1, max: 5 }
     });
 
-    //console.log(spawnParts);
-    spawn = Game.spawns['Spawn1'].spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'distributor', working : false}});
-    //if(spawn == ERR_NOT_ENOUGH_ENERGY)
-    //  console.log("Not enough energy to spawn distributor.");
+    let result = spawner.spawnCreep(spawnParts, name.getRandom(), { memory: { role: 'distributor', working : false}});
+    if(result !== 'OK')
+      console.log(`Failed to spawn distributor: ${result}`);
   }
 };
 
